@@ -12,7 +12,7 @@ namespace dev_tumbnail_generator
 {
     public static class ImageHelper
     {
-        public static void ProcessImage(Stream inputImageStream, string folder, string subfolder, string name, ILogger log)
+        public static void ProcessImage(Stream inputImageStream, string folder, string subfolder, string name, string extension, ILogger log)
         {
             log.LogInformation($"C# Blob trigger function processed blob\n Name:{name} \n  Input Size: {inputImageStream.Length} Bytes");
 
@@ -33,13 +33,13 @@ namespace dev_tumbnail_generator
                 }
 
                 outputImageStream.Position = 0; // Reset position
-                UploadImageToBlobStorageAsync(outputImageStream, folder, subfolder, name).Wait();
+                UploadImageToBlobStorageAsync(outputImageStream, folder, subfolder, name, extension).Wait();
 
                 log.LogInformation($"C# Blob trigger function processed blob\n Name:{name} \n  Output Size: {outputImageStream.Length} Bytes");
             }
         }
 
-        private static async Task UploadImageToBlobStorageAsync(Stream imageStream, string folder, string subfolder, string name)
+        private static async Task UploadImageToBlobStorageAsync(Stream imageStream, string folder, string subfolder, string name, string extension)
         {
             string storageConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage"); // Using the connection string from environment variables
 
@@ -47,7 +47,7 @@ namespace dev_tumbnail_generator
             CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
 
             CloudBlobContainer container = blobClient.GetContainerReference("archive");
-            CloudBlockBlob blockBlob = container.GetBlockBlobReference($"{folder}/{subfolder}/image/result/{name}");
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference($"{folder}/{subfolder}/image/result/small-{name}.{extension}");
 
             imageStream.Position = 0;
             await blockBlob.UploadFromStreamAsync(imageStream);
