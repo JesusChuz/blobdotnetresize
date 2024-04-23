@@ -10,7 +10,7 @@ namespace dev_tumbnail_generator
     public class SubFolderImage
     {
         [FunctionName("SubFolderImage")]
-        public static void Run([BlobTrigger("archive/{folder}/{subfolder}/image/new-{name}.{extension}", Connection = "AzureWebJobsStorage")] Stream imageStream,
+        public static void Run([BlobTrigger("archive/{folder}/{subfolder}/image/new-{name}.{extension}", Connection = "connection_blob_dev_inprinty")] Stream imageStream,
             string folder,
             string subfolder,
             string name,
